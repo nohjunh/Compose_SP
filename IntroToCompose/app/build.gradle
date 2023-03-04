@@ -1,6 +1,6 @@
 plugins {
-    id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.android.application' version '7.3.1'
 }
 
 android {
@@ -61,3 +61,5 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 }
+
+tasks.register("prepareKotlinBuildScriptModel"){}
