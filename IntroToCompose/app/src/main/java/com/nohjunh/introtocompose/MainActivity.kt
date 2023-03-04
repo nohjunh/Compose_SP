@@ -39,6 +39,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MyApp() {
+    val moneyCounter = remember {
+        mutableStateOf(0)
+    }
+
     // A surface container using the 'background' color from the theme
     Surface(
         modifier = Modifier
@@ -50,38 +54,53 @@ fun MyApp() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "$100", style = TextStyle(
+            Text(text = "$${moneyCounter.value}", style = TextStyle(
                 color = Color.White,
                 fontSize = 35.sp,
                 fontWeight = FontWeight.ExtraBold
             ))
             Spacer(modifier = Modifier.height(130.dp))
-            CreateCircle()
+            /*
+            람다식인
+            { moneyCounter.value = it +1 }은 '(Int) -> Unit' 타입의 함수
+            이 람다식이 updateMoneyCounter 함수를 대체할 수 있게 되는 것이다.
+            따라서, CreateCircle 함수가 호출될 때,
+            첫 번째 파라미터 moneyCounter는 moneyCounter.value로 할당되며,
+            두 번째 파라미터 updateMoneyCounter는 람다식 { moneyCounter.value = it + 1 }로 할당된다.
+            CreateCircle 함수 내에서 updateMoneyCounter를 호출하면
+            람다식 { moneyCounter.value = it + 1 }이 실행되는 원리.
+             */
+            CreateCircle(moneyCounter = moneyCounter.value) { newCounter ->
+                moneyCounter.value = newCounter
+            }
+            if (moneyCounter.value > 25) {
+                Text("Lots of Money !")
+            }
         }
-
     }
 }
 
-@Preview
+//@Preview
 @Composable
-fun CreateCircle() {
-    var moneyCounter by remember {
-        mutableStateOf(0)
-    }
+// updateMoneyCounter는 Int타입의 값을 받아서 반환값이 없는 함수
+fun CreateCircle(moneyCounter: Int = 0,
+                 updateMoneyCounter: (Int) -> Unit) {
+
     // Card의 패딩은 3dp
     Card(modifier = Modifier
         .padding(3.dp)
         // 높이, 너비 모두 45dp
         .size(105.dp)
         .clickable {
-            moneyCounter += 1
+            // moneyCounter.value += 1
+            updateMoneyCounter(moneyCounter + 1)
             Log.d("Counter", "CreateCircle: $moneyCounter")
         },
         shape = CircleShape,
         elevation = 4.dp
     ) {
         Box(contentAlignment = Alignment.Center) {
-            Text(text = "Tap $moneyCounter", modifier = Modifier)
+            Text(text = "Tap", modifier = Modifier)
         }
     }
 }
