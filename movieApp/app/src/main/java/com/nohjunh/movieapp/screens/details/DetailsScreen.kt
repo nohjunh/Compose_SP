@@ -2,8 +2,11 @@ package com.nohjunh.movieapp.screens.details
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
@@ -12,8 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
+import coil.transform.CircleCropTransformation
+import com.nohjunh.movieapp.model.Movie
 import com.nohjunh.movieapp.model.getMovies
 import com.nohjunh.movieapp.widgets.MovieRow
 
@@ -59,12 +69,45 @@ fun DetailsScreen(navController: NavController,
                 verticalArrangement = Arrangement.Top
             ) {
                 MovieRow(movie = newMovieList.first())
-                Text(
-                    text = newMovieList[0].title,
-                    style = MaterialTheme.typography.h5
+                Spacer(
+                    modifier = Modifier.height(8.dp)
                 )
+                Divider()
+                Text(text = "Movie Images")
+                HorizontalScrollableImageView(newMovieList)
             }
 
+        }
+    }
+}
+
+@Composable
+private fun HorizontalScrollableImageView(newMovieList: List<Movie>) {
+    LazyRow {
+        items(newMovieList[0].images) { image ->
+            Card(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(240.dp),
+                elevation = 5.dp
+            ) {
+                val painter = rememberAsyncImagePainter(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(image)
+                        .size(Size.ORIGINAL)
+                        .crossfade(true)
+                        .build(),
+                )
+                if (painter.state is AsyncImagePainter.State.Loading ||
+                    painter.state is AsyncImagePainter.State.Error
+                ) {
+                    CircularProgressIndicator()
+                }
+                Image(
+                    painter = painter,
+                    contentDescription = "Movie Poster"
+                )
+            }
         }
     }
 }
