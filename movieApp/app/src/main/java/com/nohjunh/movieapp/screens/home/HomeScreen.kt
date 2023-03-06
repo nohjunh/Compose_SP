@@ -2,6 +2,8 @@ package com.nohjunh.movieapp.screens.home
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -31,6 +33,11 @@ fun HomeScreen(navController: NavController) {
         },
         //
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) { }
         MainContent(navController = navController)
     }
 }
