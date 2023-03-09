@@ -3,6 +3,8 @@ package com.nohjunh.jettrivia.repository
 import com.nohjunh.jettrivia.data.DataOrException
 import com.nohjunh.jettrivia.model.QuestionItem
 import com.nohjunh.jettrivia.network.QuestionApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
