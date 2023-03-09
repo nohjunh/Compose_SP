@@ -63,6 +63,10 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
 
+
+    //Timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
 
@@ -89,4 +93,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     //GSON converter
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    //OKHttp
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.3"
 }
