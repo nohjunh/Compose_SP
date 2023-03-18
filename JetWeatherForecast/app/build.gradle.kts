@@ -1,7 +1,8 @@
 plugins {
+    id (Plugins.ANDROID_APPLICATION)
     id (Plugins.KOTLIN_ANDROID_PLUGIN)
     id (Plugins.HILT_PLUGIN)
-    id (Plugins.ANDROID_APPLICATION)
+    id (Plugins.SECRETS_GRADLE_PLUGIN)
     id (Plugins.PARCELIZE)
     id (Plugins.KAPT)
 }
