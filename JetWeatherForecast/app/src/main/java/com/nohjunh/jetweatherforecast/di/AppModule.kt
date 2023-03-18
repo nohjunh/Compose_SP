@@ -22,7 +22,7 @@ object AppModule {
     @Singleton
     @Provides
     // Loging에 사용할 OkHttpClient를 주입하는 provideOkHttpClient 메소드 정의
-    fun provideOkHttpClient() : OkHttpClient {
+    fun provideOkHttpClient(): OkHttpClient {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
@@ -36,7 +36,7 @@ object AppModule {
     @Singleton
     @Provides
     // Retrofit 객체를 주입하기 위한 provideRetrofit 메소드
-    fun provideRetrofit(okHttpClient: OkHttpClient) : Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder() // 빌더 패턴을 통해 retrofit 객체를 만든다.
             .addConverterFactory(GsonConverterFactory.create()) // DTO 변환에 사용할 GsonConverterFactory를 JSON Converter로 설정 만약 Moshi을 쓰면 MoshiConverterFactory쓰면 됨.
             .client(okHttpClient) //클라이언트 속성에 okHTTP interceptor를 넣어줘서 로그캣에서 패킷내용을 모니터링 (okhttp가 apllication과 서버 사이에서 data를 interceptor할 수 있는 기능이 있기 때문)
@@ -47,7 +47,7 @@ object AppModule {
     @Singleton
     @Provides
     // WeatherApi서비스 객체를 주입하기 위한 provideWeatherApiService메소드
-    fun provideWeatherApiService(retrofit : Retrofit) : WeatherApi {
+    fun provideOpenWeatherApiService(retrofit : Retrofit): WeatherApi {
         // Retrofit의 create메소드로 TestApi의 인스턴스 생성
         return retrofit.create(WeatherApi::class.java)
     }
@@ -59,7 +59,7 @@ object AppModule {
     // TestDatabase 의존 객체를 주입하기 위한 provideTestDatabase 메소드
     // Singleton을 붙였으므로 TestDatabase 객체가 singleton으로 생성됨.
     // @Provides를 통해 외부 라이브러리인 Room Database를 앱 내 필요한 곳에 주입할 수 있도록 함.
-    fun provideTestDatabase(@ApplicationContext context: Context) : TestDatabase =
+    fun provideTestDatabase(@ApplicationContext context: Context): TestDatabase =
         Room.databaseBuilder(
             context.applicationContext,
             TestDatabase::class.java,
