@@ -22,7 +22,7 @@ object AppModule {
     @Singleton
     @Provides
     // Loging에 사용할 OkHttpClient를 주입하는 provideOkHttpClient 메소드 정의
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient() : OkHttpClient {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
             .setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()

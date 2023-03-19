@@ -13,6 +13,7 @@ class WeatherRepositoryImpl @Inject constructor(
 ): WeatherRepository {
     override suspend fun getWeather(cityQuery: String, units: String): DataOrException<Weather, Boolean, Exception> {
         val response = try {
+            Timber.tag("RepoAPi").e("API call")
             api.getWeather(query = cityQuery, units = units)
         }catch (e: Exception) {
             Timber.tag("RepoEx").e("getWeather: $e")
@@ -20,7 +21,5 @@ class WeatherRepositoryImpl @Inject constructor(
         }
         Timber.tag("RepoImpl").e("getWeather: $response")
         return DataOrException(data = response)
-
     }
-
 }

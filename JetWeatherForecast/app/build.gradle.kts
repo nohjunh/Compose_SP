@@ -143,7 +143,6 @@ dependencies {
     kapt (Dependencies.HILT_EXTENSION_KAPT)
     // Hilt navigation
     implementation (Dependencies.HILT_COMPOSE_NAVIGATION)
-
 }
 
 tasks.register("prepareKotlinBuildScriptModel"){}
