@@ -1,10 +1,15 @@
 package com.nohjunh.jetweatherforecast.di
 
+import android.content.Context
+import androidx.room.Room
+import com.nohjunh.jetweatherforecast.data.WeatherDao
+import com.nohjunh.jetweatherforecast.data.WeatherDatabase
 import com.nohjunh.jetweatherforecast.network.WeatherApi
 import com.nohjunh.jetweatherforecast.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -52,19 +57,23 @@ object AppModule {
         return retrofit.create(WeatherApi::class.java)
     }
 
-    /*
-     Room 의존성
+    //Room 의존성
     @Singleton
     @Provides
-    // TestDatabase 의존 객체를 주입하기 위한 provideTestDatabase 메소드
-    // Singleton을 붙였으므로 TestDatabase 객체가 singleton으로 생성됨.
+    fun provideWeatherDao(weatherDatabase: WeatherDatabase): WeatherDao = weatherDatabase.weatherDao()
+
+    @Singleton
+    @Provides
+    // weatherDatabase 의존 객체를 주입하기 위한 provideWeatherDatabase 메소드
+    // Singleton을 붙였으므로 WeatherDatabase 객체가 singleton으로 생성됨.
     // @Provides를 통해 외부 라이브러리인 Room Database를 앱 내 필요한 곳에 주입할 수 있도록 함.
-    fun provideTestDatabase(@ApplicationContext context: Context): TestDatabase =
+    fun provideWeatherDatabase(@ApplicationContext context: Context): WeatherDatabase =
         Room.databaseBuilder(
             context.applicationContext,
-            TestDatabase::class.java,
-            "testDB"
-        ).build()
-    */
+            WeatherDatabase::class.java,
+            "weather_DB"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
 
 }

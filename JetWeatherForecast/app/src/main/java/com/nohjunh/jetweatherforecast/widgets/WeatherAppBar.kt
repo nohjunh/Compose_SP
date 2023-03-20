@@ -78,7 +78,6 @@ fun WeatherAppBar(
                          onButtonClicked.invoke()
                  })
              }
-
         },
         backgroundColor = Color.Transparent,
         elevation = elevation,

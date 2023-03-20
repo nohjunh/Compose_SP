@@ -1,5 +1,7 @@
 package com.nohjunh.jetweatherforecast.di
 
+import com.nohjunh.jetweatherforecast.data.WeatherDatabase
+import com.nohjunh.jetweatherforecast.repository.WeatherDbRepository
 import com.nohjunh.jetweatherforecast.repository.WeatherRepository
 import com.nohjunh.jetweatherforecast.repository.WeatherRepositoryImpl
 import dagger.Binds
@@ -25,4 +27,11 @@ abstract class RepositoryModule {
     abstract fun bindWeatherRepository(
         WeatherRepositoryImpl: WeatherRepositoryImpl
     ): WeatherRepository
+
+    @Singleton
+    @Binds
+    abstract fun bindWeatherDbRepository(
+        WeatherRepositoryImpl: WeatherRepositoryImpl
+    ): WeatherDbRepository
+
 }
