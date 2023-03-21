@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -17,14 +18,18 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +46,7 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
 import com.google.android.exoplayer2.ui.StyledPlayerView
 
+@ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {
 
     private fun getVideoUri(): Uri {
@@ -80,12 +86,14 @@ private fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
         resizeMode = RESIZE_MODE_ZOOM
     }
 
+@ExperimentalComposeUiApi
 @Composable
 fun Login(videoUri: Uri) {
     val context = LocalContext.current
     val passwordFocusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
     val exoPlayer = remember { context.buildExoPlayer(videoUri) }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     DisposableEffect(
         AndroidView(
@@ -101,7 +109,8 @@ fun Login(videoUri: Uri) {
     Column(
         modifier = Modifier
             .padding(24.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .addFocusCleaner(keyboardController!!),
         verticalArrangement = Arrangement.spacedBy(15.dp, alignment = Alignment.Bottom),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -115,17 +124,19 @@ fun Login(videoUri: Uri) {
             keyboardActions = KeyboardActions(
                 onNext = {
                     passwordFocusRequester.requestFocus()
+                    keyboardController.hide()
                 }
-            )
+            ),
         )
         TextInput(
             InputType.Password,
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    keyboardController?.hide()
                 }
             ),
-            focusRequester = passwordFocusRequester
+            focusRequester = passwordFocusRequester,
         )
         Button(
             onClick = {},
@@ -159,11 +170,13 @@ fun Login(videoUri: Uri) {
     }
 }
 
+@ExperimentalComposeUiApi
 @Composable
 fun TextInput(
     inputType: InputType,
     focusRequester: FocusRequester? = null,
-    keyboardActions: KeyboardActions
+    keyboardActions: KeyboardActions,
+    onAction: KeyboardActions = KeyboardActions.Default
 ) {
     var value by remember {
         mutableStateOf("")
@@ -217,4 +230,14 @@ sealed class InputType(
         ),
         visualTransformation = PasswordVisualTransformation()
     )
+}
+
+@ExperimentalComposeUiApi
+fun Modifier.addFocusCleaner(keyboardController: SoftwareKeyboardController, doOnClear: () -> Unit = {}): Modifier {
+    return this.pointerInput(Unit) {
+        detectTapGestures(onTap = {
+            doOnClear()
+            keyboardController.hide()
+        })
+    }
 }
