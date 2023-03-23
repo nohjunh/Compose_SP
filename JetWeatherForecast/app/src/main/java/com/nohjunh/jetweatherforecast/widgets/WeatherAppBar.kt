@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.nohjunh.jetweatherforecast.model.Favorite
 import com.nohjunh.jetweatherforecast.navigation.WeatherScreens
 import com.nohjunh.jetweatherforecast.screens.favorite.FavoriteViewModel
+import timber.log.Timber
 
 @Composable
 fun WeatherAppBar(
