@@ -4,8 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +16,7 @@ import androidx.navigation.NavController
 import com.nohjunh.jetweatherforecast.data.DataOrException
 import com.nohjunh.jetweatherforecast.model.Weather
 import com.nohjunh.jetweatherforecast.navigation.WeatherScreens
+import com.nohjunh.jetweatherforecast.screens.Settings.SettingsViewModel
 import com.nohjunh.jetweatherforecast.utils.formatDate
 import com.nohjunh.jetweatherforecast.utils.formatDecimals
 import com.nohjunh.jetweatherforecast.widgets.*
@@ -26,23 +26,36 @@ import timber.log.Timber
 fun MainScreen(
     navController: NavController,
     mainViewModel: MainViewModel = hiltViewModel(),
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     city: String?
 ) {
-    /*
-    produceState는 state나 mutableStateOf와 같은 상태 저장 솔루션과 달리,
-    상태를 생성하고 업데이트하기 위해 produce-consumer 패턴을 사용. 즉 StateFlow 객체를 반환함
-    상태를 업데이트할 때마다 새로운 값으로 Compose에 알림을 보내고,
-    Compose는 자동으로 화면을 다시 그린다.
-    */
-    val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
-        initialValue = DataOrException(loading = true)) {
-        value = mainViewModel.getWeatherData(city = city.toString(), units = "metric")
-    }.value
+    val curCity: String = city!!.ifBlank { "Seoul" }
+    val unitFromDb = settingsViewModel.unitList.collectAsState().value
+    var unit by remember {
+        mutableStateOf("imperial")
+    }
+    var isImperial by remember {
+        mutableStateOf(false)
+    }
+    if (!unitFromDb.isEmpty()) {
+        unit = unitFromDb[0].unit.split(" ")[0].lowercase()
+        isImperial = unit == "imperial"
+        /*
+        produceState는 state나 mutableStateOf와 같은 상태 저장 솔루션과 달리,
+        상태를 생성하고 업데이트하기 위해 produce-consumer 패턴을 사용. 즉 StateFlow 객체를 반환함
+        상태를 업데이트할 때마다 새로운 값으로 Compose에 알림을 보내고,
+        Compose는 자동으로 화면을 다시 그린다.
+        */
+        val weatherData = produceState<DataOrException<Weather, Boolean, Exception>>(
+            initialValue = DataOrException(loading = true)) {
+            value = mainViewModel.getWeatherData(city = curCity, units = unit)
+        }.value
 
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    }else if (weatherData.data != null) {
-        MainScaffold(weather = weatherData.data!!, navController)
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        }else if (weatherData.data != null) {
+            MainScaffold(weather = weatherData.data!!, navController, isImperial = isImperial)
+        }
     }
 }
 
@@ -51,7 +64,7 @@ fun MainScreen(
   앱 바를 포함한 TopAppBar과 BottomNavigation 등의 컴포넌트를 제공
  */
 @Composable
-fun MainScaffold(weather: Weather, navController: NavController) {
+fun MainScaffold(weather: Weather, navController: NavController, isImperial: Boolean) {
     Scaffold(
         topBar = {
             WeatherAppBar(
@@ -71,13 +84,13 @@ fun MainScaffold(weather: Weather, navController: NavController) {
             modifier = Modifier
                 .padding(it)
         ) {
-            MainContent(data = weather)
+            MainContent(data = weather, isImperial = isImperial)
         }
     }
 }
 
 @Composable
-fun MainContent(data: Weather) {
+fun MainContent(data: Weather, isImperial: Boolean) {
     val weatherItem = data.list[0]
     val imageUrl = "https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}.png"
     Timber.tag("ImgUrl").e(weatherItem.weather[0].icon)
@@ -120,7 +133,8 @@ fun MainContent(data: Weather) {
             }
         }
         HumidityWindPressureRow(
-            weather = data.list[0]
+            weather = data.list[0],
+            isImperial = isImperial
         )
         Divider()
         SunsetSunRiseRow(
