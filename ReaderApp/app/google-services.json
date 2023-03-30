@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "864626539051",
+    "project_id": "jetareader-b630e",
+    "storage_bucket": "jetareader-b630e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864626539051:android:0644be3d8a6798b53ec86e",
+        "android_client_info": {
+          "package_name": "com.example.readerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "864626539051-i4ok4salkvuok3l62ugodml8becic2ps.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAGzEcTBvqZ4u7dpfK1LETPS5PfVnUj-HI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "864626539051-i4ok4salkvuok3l62ugodml8becic2ps.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
