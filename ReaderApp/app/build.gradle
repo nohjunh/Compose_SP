@@ -104,7 +104,11 @@ dependencies {
 
     // OkHttp
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.2")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
     // JSON Converter
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    // Timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }
