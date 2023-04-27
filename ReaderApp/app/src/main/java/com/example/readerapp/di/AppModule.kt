@@ -1,6 +1,7 @@
 package com.example.readerapp.di
 
 
+import com.example.readerapp.utils.Constants.BASE_URL
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,11 +44,11 @@ object AppModule {
             .build() // 객체 생성
     }
 
-    @Singleton
-    @Provides
-    // api서비스 객체를 주입하기 위한 provideApiService 메소드
-    fun provideTest1ApiService(retrofit : Retrofit): Test1Api {
-        // Retrofit의 create메소드로 Test1Api의 인스턴스 생성
-        return retrofit.create(Test1Api::class.java)
-    }
+//    @Singleton
+//    @Provides
+//    // api서비스 객체를 주입하기 위한 provideApiService 메소드
+//    fun provideTest1ApiService(retrofit : Retrofit): Test1Api {
+//        // Retrofit의 create메소드로 Test1Api의 인스턴스 생성
+//        return retrofit.create(Test1Api::class.java)
+//    }
 }

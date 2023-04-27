@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ReaderApp</string>
+    <string name="create_acct">유효한 email과 password는 최소 6글자 이상입니다.</string>
 </resources>

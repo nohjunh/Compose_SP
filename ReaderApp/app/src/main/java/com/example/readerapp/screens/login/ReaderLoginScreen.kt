@@ -3,7 +3,6 @@ package com.example.readerapp.screens.login
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.R
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.readerapp.R
 import com.example.readerapp.components.EmailInput
 import com.example.readerapp.components.PasswordInput
 import com.example.readerapp.components.ReaderLogo
@@ -35,7 +35,7 @@ import com.example.readerapp.navigation.ReaderScreens
 @Composable
 fun ReaderLoginScreen(
     navController: NavController,
-    viewModel: LoginScreenViewModel
+    viewModel: LoginScreenViewModel = hiltViewModel()
 ) {
     val showLoginForm = rememberSaveable { mutableStateOf(true) }
 
@@ -47,7 +47,7 @@ fun ReaderLoginScreen(
             verticalArrangement = Arrangement.Top) {
             ReaderLogo()
             if (showLoginForm.value) UserForm(loading = false, isCreateAccount = false){ email, password ->
-                viewModel.signInWithEmailAndPassword(email, password){
+                viewModel.signInWithEmailAndPassword(email, password) {
                     navController.navigate(ReaderScreens.ReaderHomeScreen.name)
                 }
             }
@@ -58,7 +58,6 @@ fun ReaderLoginScreen(
                     }
                 }
             }
-
         }
         Spacer(modifier = Modifier.height(15.dp))
         Row(
@@ -72,16 +71,12 @@ fun ReaderLoginScreen(
                 modifier = Modifier
                     .clickable {
                         showLoginForm.value = !showLoginForm.value
-
                     }
                     .padding(start = 5.dp),
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colors.secondaryVariant)
-
         }
-
     }
-
 }
 
 @ExperimentalComposeUiApi
@@ -90,7 +85,7 @@ fun ReaderLoginScreen(
 fun UserForm(
     loading: Boolean = false,
     isCreateAccount: Boolean = false,
-    onDone: (String, String) -> Unit = { email, pwd ->}
+    onDone: (String, String) -> Unit = { email, pwd -> }
 ) {
     val email = rememberSaveable { mutableStateOf("") }
     val password = rememberSaveable { mutableStateOf("") }
@@ -111,7 +106,7 @@ fun UserForm(
         horizontalAlignment = Alignment.CenterHorizontally) {
         if (isCreateAccount) {
             Text(
-                text = "Test",
+                text = stringResource(id = R.string.create_acct),
                 modifier = Modifier.padding(4.dp)
             )
         }else {
@@ -132,29 +127,27 @@ fun UserForm(
             onAction = KeyboardActions {
                 if (!valid) return@KeyboardActions
                 onDone(email.value.trim(), password.value.trim())
-            })
+            }
+        )
 
         SubmitButton(
             textId = if (isCreateAccount) "Create Account" else "Login",
             loading = loading,
             validInputs = valid
-        ){
+        ) {
             onDone(email.value.trim(), password.value.trim())
             keyboardController?.hide()
         }
-
-
-
     }
-
-
 }
 
 @Composable
-fun SubmitButton(textId: String,
-                 loading: Boolean,
-                 validInputs: Boolean,
-                 onClick: () -> Unit) {
+fun SubmitButton(
+    textId: String,
+    loading: Boolean,
+    validInputs: Boolean,
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
         modifier = Modifier
@@ -167,9 +160,7 @@ fun SubmitButton(textId: String,
         else {
             Text(text = textId, modifier = Modifier.padding(5.dp))
         }
-
     }
-
 }
 
 
