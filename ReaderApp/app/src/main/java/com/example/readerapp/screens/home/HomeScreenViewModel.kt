@@ -1,4 +1,8 @@
 package com.example.readerapp.screens.home
 
-class HomeScreenViewModel {
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+
+@HiltViewModel
+class HomeScreenViewModel: ViewModel() {
 }
