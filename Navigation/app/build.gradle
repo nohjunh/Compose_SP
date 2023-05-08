@@ -63,4 +63,5 @@ dependencies {
 
     def nav_version = "2.5.3"
     implementation "androidx.navigation:navigation-compose:$nav_version"
+    implementation "androidx.compose.material:material:1.4.3" // BottomNavigation 및 BottomNavigationItem 구성요소를 사용하려면 해당 종속 항목을 추가
 }

@@ -1,5 +1,6 @@
 package com.practice.test.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -11,7 +12,6 @@ import com.practice.test.component.CustomTextField
 
 @Composable
 fun Home(
-    navigateToWelcome: () -> Unit,
     navigateToWelcomeWithArgs: (String) -> Unit
 ) {
     var userName by remember {
