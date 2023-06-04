@@ -1,0 +1,93 @@
+Retrofit은 HTTP 요청에 대한 응답을 처리하기 위해 Response 객체 사용
+Response 객체는 Retrofit에서 제공되는 클래스로, HTTP 응답의 상태 코드, 헤더, 본문 등을 포함한다.
+
+Retrofit의 인터페이스 메서드에서 반환 타입으로 2가지 형태를 사용할 수 있다.
+1. Call<Response<T>> 형태
+2. suspend fun 형태
+
+1. Call<Response<T>>: 비동기적으로 HTTP 요청을 수행하고, Response<T> 객체를 콜백으로 받는 형태
+ex)
+@GET("api/users")
+fun getUsers(): Call<Response<User>>
+이 경우, Call 객체를 사용하여 비동기적으로 요청을 실행하고, Response<User> 객체를 받는다.
+enqueue 메서드를 사용하여 비동기적으로 실행하거나, execute 메서드를 사용하여 동기적으로 실행할 수도 있다.
+
+2. suspend fun: 코루틴을 사용하여 비동기적으로 HTTP 요청을 수행하는 형태
+ex)
+@GET("api/users")
+suspend fun getUsers(): Response<User>
+이 경우, suspend 키워드가 사용된 함수로서 코루틴을 지원하며, Response<User> 객체를 직접 반환한다.
+이 함수를 코루틴 스코프 내에서 호출하여 비동기적으로 실행 가능
+
+두 함수 모두 Response 객체 반환
+
+--------------
+interface GitHubService {
+    @GET("users/{username}")
+    suspend fun getUser(@Path("username") username: String): Response<User>
+}
+
+data class User(val login: String, val name: String, val followers: Int)
+
+// Retrofit 인스턴스 생성
+val retrofit = Retrofit.Builder()
+    .baseUrl("https://api.github.com/")
+    .addConverterFactory(GsonConverterFactory.create())
+    .build()
+
+// GitHubService 인터페이스 구현체 생성
+val service = retrofit.create(GitHubService::class.java)
+
+// 사용자 정보 요청
+val response = service.getUser("octocat")
+
+if (response.isSuccessful) {
+    val user = response.body()
+    if (user != null) {
+        // 사용자 정보 출력
+        println("Username: ${user.login}")
+        println("Name: ${user.name}")
+        println("Followers: ${user.followers}")
+    } else {
+        println("Response body is null")
+    }
+} else {
+    println("Request failed: ${response.code()}")
+}
+
+getUser() 함수는 Response<User>를 반환한다.
+response.isSuccessful을 사용하여 요청이 성공했는지 확인한 후, response.body()를 호출하여 User 객체를 가져오는데, 이때
+response.body()의 반환값은 nullable이므로 null 체크를 수행해야 한다.
+
+성공적인 요청의 경우, 사용자 정보를 출력하고 실패한 경우에는 오류 코드를 출력한다.
+response.code()를 사용하여 HTTP 응답의 상태 코드를 확인 가능
+
+--------------------------
+response.body()는 Retrofit에서 HTTP 응답의 본문(body)을 반환하는 메서드
+
+Retrofit은 Response 객체에 HTTP 응답의 모든 정보를 포함시키는데, response.body() 메서드를 호출하면 해당 응답의 본문 데이터를 가져온다.
+본문 즉 body()는 주로 JSON 형식으로 리턴되며, Retrofit은 이를 지정된 모델 클래스로 자동 변환할 수 있도록 지원한다.
+
+예를 들어, 위의 예제에서 response.body()는 User 객체를 리턴하는데,
+이는 GitHub API에서 가져온 사용자 정보를 나타내는 JSON 데이터를 User 클래스로 자동 변환한 결과이다.
+
+HTTP 응답의 body는 응답의 실제 데이터를 포함하므로,
+해당 데이터를 사용하여 작업을 수행할 수 있다.
+예를 들어, JSON 데이터를 파싱하여 화면에 출력하거나, 데이터베이스에 저장하거나, 다른 처리를 수행
+
+다만, response.body() 메서드는 nullable이므로 null 체크를 수행하여 안전하게 사용하는 것이 좋고,
+응답이 실패한 경우에는 response.body()가 null이 될 수 있다.
+
+-------------
+ApiCallAdapter 적용 후 예시)
+
+viewModelScope.launch {
+    val response = XXXRemoteDataSource.invoke()
+    response.onSuccess { XXXList ->
+        XXXFlow.emit(XXXList)
+    }.onError { code, message ->
+        errorFlow.emit("$code $message")
+    }.onException {
+        errorFlow.emit("${it.message}")
+    }
+}
